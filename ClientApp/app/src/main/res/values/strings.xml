@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ExpiryTracker</string>
+    <string name="app_name">Expiry Tracker</string>
     <string name="bottomwave" />
     <string name="wave1" />
     <string name="logo" />
@@ -15,4 +15,20 @@
     <string name="register">Register</string>
     <string name="swipe_right_for_login">Swipe Right for Login</string>
     <string name="email">Email</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="add_icon">add icon</string>
+    <string name="add_to_inventory">Add to inventory</string>
+    <string name="enter_product_name">Product name</string>
+    <string name="enter_product_expiry_date">Product expiry date</string>
+    <string name="add_item">Add Item</string>
 </resources>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scrollbarSize="6dp"
+    tools:context=".HomeActivity"
+    android:orientation="vertical">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/home_add_product_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="24dp"
+        android:clickable="true"
+        android:scrollbarDefaultDelayBeforeFade="100"
+        android:theme="@style/Theme.ExpiryTracker"
+        app:tint="#FFFFFF"
+        app:backgroundTint="@color/colorPrimaryLight"
+        app:borderWidth="0dp"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="#FFFFFF"
+        app:srcCompat="@drawable/ic_add" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/qr_code_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="24dp"
+        android:clickable="false"
+        android:visibility="invisible"
+        app:backgroundTint="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/home_add_product_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/mtrl_fab_ripple_color"
+        app:srcCompat="@drawable/ic_qr_code_scanner"
+        app:tint="#60AC5D" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/form_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="12dp"
+        android:clickable="false"
+        android:visibility="invisible"
+        app:backgroundTint="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/qr_code_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_keyboard"
+        app:tint="#60AC5D" />
+
+    <TextView
+        android:id="@+id/form_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginBottom="28dp"
+        android:text="Type manually"
+        android:textColor="#60AC5D"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/form_btn"
+        app:layout_constraintEnd_toStartOf="@+id/form_btn" />
+
+    <TextView
+        android:id="@+id/barcode_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="24dp"
+        android:text="Scan barcode"
+        android:textColor="#60AC5D"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/qr_code_btn"
+        app:layout_constraintEnd_toStartOf="@+id/qr_code_btn" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="407dp"
+        android:layout_height="193dp"
+        android:background="@drawable/app_header_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/verticalBotMenuBtn"
+        android:layout_width="53dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/colorPrimaryLight"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_vertical_dot" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
