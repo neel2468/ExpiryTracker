@@ -25,6 +25,14 @@
 
 
         </activity>
+
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".CaptureAct"
+            android:stateNotNeeded="true"
+            android:theme="@style/zxing_CaptureTheme"
+            android:windowSoftInputMode="stateAlwaysHidden">
+    </activity>
     </application>
 
 </manifest>

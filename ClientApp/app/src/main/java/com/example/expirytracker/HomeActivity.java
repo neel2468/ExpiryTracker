@@ -1,14 +1,22 @@
 package com.example.expirytracker;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -17,17 +25,33 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
     FloatingActionButton add_product_btn,scan_qr_code_btn,product_form_btn;
     Boolean isTrue = true;
-    TextView scan_qr_msg, form_msg;
+    CardView scan_qr_msg, form_msg;
     Dialog product_form;
+
+    private RecyclerView productRecyclerView;
+    private List<Object> viewItems = new ArrayList<>();
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager layoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,5 +161,75 @@ public class HomeActivity extends AppCompatActivity {
 
             }
         });
+
+        scan_qr_code_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IntentIntegrator intentIntegrator = new IntentIntegrator(HomeActivity.this);
+                intentIntegrator.setPrompt("Scan a barcode or QRCode");
+                intentIntegrator.setOrientationLocked(false);
+                intentIntegrator.setCaptureActivity(CaptureAct.class);
+                intentIntegrator.initiateScan();
+            }
+        });
+
+         productRecyclerView = (RecyclerView) findViewById(R.id.productListRecyclerView);
+         layoutManager = new LinearLayoutManager(this);
+         productRecyclerView.setLayoutManager(layoutManager);
+
+         mAdapter = new RecyclerAdapter(this, viewItems);
+         productRecyclerView.setAdapter(mAdapter);
+
+         addItemsFromJSON();
+
+
+    }
+
+    private void addItemsFromJSON() {
+        FileUtility fileUtility = new FileUtility();
+        try {
+            String jsonDataString = fileUtility.readJSONDataFromFile(getResources().openRawResource(R.raw.products));
+            JSONArray jsonArray = new JSONArray(jsonDataString);
+            for(int i=0;i<jsonArray.length();i++) {
+                JSONObject itemObject = jsonArray.getJSONObject(i);
+                String name = itemObject.getString("name");
+                String expiry_date = itemObject.getString("expiry_date");
+
+                Products products = new Products(name,expiry_date);
+                viewItems.add(products);
+            }
+        } catch (JSONException e) {
+            Log.d("HomeActivity","addItemsFromJSON: ",e);
+        } catch (IOException e) {
+            Log.d("HomeActivity","addItemsFromJSON: ",e);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(getBaseContext(),"Cancelled",Toast.LENGTH_LONG).show();
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+
+                builder.setTitle("Result");
+                builder.setMessage(result.getContents());
+                builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+
+            }
+        }
+        else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 }
