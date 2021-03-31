@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,12 +22,19 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
@@ -36,9 +44,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.nio.BufferUnderflowException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
+
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -70,11 +83,6 @@ public class HomeActivity extends AppCompatActivity {
         Animation fabClose = AnimationUtils.loadAnimation(this,R.anim.fab_close);
 
         product_form = new Dialog(this);
-
-
-
-
-
 
         add_product_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,9 +140,6 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
 
-
-
-
                 EditText product_expiry_date_field = (EditText) product_form.findViewById(R.id.add_product_expiry_date);
                 product_expiry_date_field.setInputType(InputType.TYPE_NULL);
                 product_expiry_date_field.setOnClickListener(new View.OnClickListener() {
@@ -158,6 +163,22 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 });
 
+                Button addItemBtn = (Button) product_form.findViewById(R.id.itemBtn);
+                addItemBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String name = String.valueOf(product_name_field.getText());
+                        String date = String.valueOf(product_expiry_date_field.getText());
+                        Products products = new Products(name,date);
+                        viewItems.add(products);
+                        mAdapter.notifyDataSetChanged();
+                        Toast.makeText(getBaseContext(),"Product added",Toast.LENGTH_LONG).show();
+                        product_form.dismiss();
+
+                    }
+
+                });
+
 
             }
         });
@@ -176,16 +197,19 @@ public class HomeActivity extends AppCompatActivity {
          productRecyclerView = (RecyclerView) findViewById(R.id.productListRecyclerView);
          layoutManager = new LinearLayoutManager(this);
          productRecyclerView.setLayoutManager(layoutManager);
-
          mAdapter = new RecyclerAdapter(this, viewItems);
          productRecyclerView.setAdapter(mAdapter);
-
          addItemsFromJSON();
+
+
 
 
     }
 
     private void addItemsFromJSON() {
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading...");
+        progressDialog.show();
         FileUtility fileUtility = new FileUtility();
         try {
             String jsonDataString = fileUtility.readJSONDataFromFile(getResources().openRawResource(R.raw.products));
@@ -197,12 +221,58 @@ public class HomeActivity extends AppCompatActivity {
 
                 Products products = new Products(name,expiry_date);
                 viewItems.add(products);
+                progressDialog.dismiss();
             }
         } catch (JSONException e) {
             Log.d("HomeActivity","addItemsFromJSON: ",e);
         } catch (IOException e) {
             Log.d("HomeActivity","addItemsFromJSON: ",e);
         }
+//        String url =  "https://a4f878e1b13a.ngrok.io/api/v1/products";
+//        RequestQueue requestQueue = Volley.newRequestQueue(this);
+//        JSONObject postData = new JSONObject();
+//        try {
+//            postData.put("email", getIntent().getStringExtra("email"));
+//
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+
+
+//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
+//            @Override
+//            public void onResponse(JSONObject response) {
+//                try {
+//                    progressDialog.dismiss();
+//                    JSONArray jsonArray = response.getJSONArray("data");
+//
+//                    for(int i = 0; i < jsonArray.length(); i++){
+//                        JSONObject jsonObject = jsonArray.getJSONObject(i);
+//                        String title = jsonObject.getString("title");
+//                        JSONObject details = jsonObject.getJSONObject("details");
+//                        String date = details.getString("exprd");
+//                        date.replace("/\\//g","-");
+//                        Log.d("title",title);
+//                        Log.d("date",date);
+//                        Products products = new Products(title,date);
+//                        viewItems.add(products);
+//                    }
+//                } catch (JSONException e) {
+//
+//                    e.printStackTrace();
+//                }
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                error.printStackTrace();
+//            }
+//        });
+
+
+
+
     }
 
     @Override
@@ -213,18 +283,20 @@ public class HomeActivity extends AppCompatActivity {
             if(result.getContents() == null) {
                 Toast.makeText(getBaseContext(),"Cancelled",Toast.LENGTH_LONG).show();
             } else {
-                AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+                try {
+                    JSONObject jsonObject = new JSONObject(result.getContents());
+                    String name = jsonObject.getString("name");
+                    String date = jsonObject.getString("expiry_date");
+                    Log.d("name",name);
+                    Log.d("date",date);
+                    Products products = new Products(name,date);
+                    viewItems.add(products);
+                    mAdapter.notifyDataSetChanged();
+                    Toast.makeText(getBaseContext(),"Product added",Toast.LENGTH_LONG).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                builder.setTitle("Result");
-                builder.setMessage(result.getContents());
-                builder.setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
 
             }
         }

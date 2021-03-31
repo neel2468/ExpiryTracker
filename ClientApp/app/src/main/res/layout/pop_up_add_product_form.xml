@@ -81,6 +81,7 @@
                     android:background="@drawable/custom_btn"
                     android:text="@string/add_item"
                     android:layout_gravity="right"
+                    android:id="@+id/itemBtn"
                     />
 
 

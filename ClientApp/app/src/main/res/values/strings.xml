@@ -31,4 +31,6 @@
     <string name="enter_product_name">Product name</string>
     <string name="enter_product_expiry_date">Product expiry date</string>
     <string name="add_item">Add Item</string>
+
+    <string name="API_URL">http://127.0.0.1:8085/api/v1</string>
 </resources>
