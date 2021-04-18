@@ -210,65 +210,65 @@ public class HomeActivity extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
-        FileUtility fileUtility = new FileUtility();
-        try {
-            String jsonDataString = fileUtility.readJSONDataFromFile(getResources().openRawResource(R.raw.products));
-            JSONArray jsonArray = new JSONArray(jsonDataString);
-            for(int i=0;i<jsonArray.length();i++) {
-                JSONObject itemObject = jsonArray.getJSONObject(i);
-                String name = itemObject.getString("name");
-                String expiry_date = itemObject.getString("expiry_date");
+//         FileUtility fileUtility = new FileUtility();
+//         try {
+//             String jsonDataString = fileUtility.readJSONDataFromFile(getResources().openRawResource(R.raw.products));
+//             JSONArray jsonArray = new JSONArray(jsonDataString);
+//             for(int i=0;i<jsonArray.length();i++) {
+//                 JSONObject itemObject = jsonArray.getJSONObject(i);
+//                 String name = itemObject.getString("name");
+//                 String expiry_date = itemObject.getString("expiry_date");
 
-                Products products = new Products(name,expiry_date);
-                viewItems.add(products);
-                progressDialog.dismiss();
-            }
-        } catch (JSONException e) {
-            Log.d("HomeActivity","addItemsFromJSON: ",e);
-        } catch (IOException e) {
-            Log.d("HomeActivity","addItemsFromJSON: ",e);
-        }
-//        String url =  "https://a4f878e1b13a.ngrok.io/api/v1/products";
-//        RequestQueue requestQueue = Volley.newRequestQueue(this);
-//        JSONObject postData = new JSONObject();
-//        try {
-//            postData.put("email", getIntent().getStringExtra("email"));
-//
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
+//                 Products products = new Products(name,expiry_date);
+//                 viewItems.add(products);
+//                 progressDialog.dismiss();
+//             }
+//         } catch (JSONException e) {
+//             Log.d("HomeActivity","addItemsFromJSON: ",e);
+//         } catch (IOException e) {
+//             Log.d("HomeActivity","addItemsFromJSON: ",e);
+//         }
+       String url =  "https://a4f878e1b13a.ngrok.io/api/v1/products";
+       RequestQueue requestQueue = Volley.newRequestQueue(this);
+       JSONObject postData = new JSONObject();
+       try {
+           postData.put("email", getIntent().getStringExtra("email"));
 
 
-//        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                try {
-//                    progressDialog.dismiss();
-//                    JSONArray jsonArray = response.getJSONArray("data");
-//
-//                    for(int i = 0; i < jsonArray.length(); i++){
-//                        JSONObject jsonObject = jsonArray.getJSONObject(i);
-//                        String title = jsonObject.getString("title");
-//                        JSONObject details = jsonObject.getJSONObject("details");
-//                        String date = details.getString("exprd");
-//                        date.replace("/\\//g","-");
-//                        Log.d("title",title);
-//                        Log.d("date",date);
-//                        Products products = new Products(title,date);
-//                        viewItems.add(products);
-//                    }
-//                } catch (JSONException e) {
-//
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                error.printStackTrace();
-//            }
-//        });
+       } catch (JSONException e) {
+           e.printStackTrace();
+       }
+
+
+       JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, postData, new Response.Listener<JSONObject>() {
+           @Override
+           public void onResponse(JSONObject response) {
+               try {
+                   progressDialog.dismiss();
+                   JSONArray jsonArray = response.getJSONArray("data");
+
+                   for(int i = 0; i < jsonArray.length(); i++){
+                       JSONObject jsonObject = jsonArray.getJSONObject(i);
+                       String title = jsonObject.getString("title");
+                       JSONObject details = jsonObject.getJSONObject("details");
+                       String date = details.getString("exprd");
+                       date.replace("/\\//g","-");
+                       Log.d("title",title);
+                       Log.d("date",date);
+                       Products products = new Products(title,date);
+                       viewItems.add(products);
+                   }
+               } catch (JSONException e) {
+
+                   e.printStackTrace();
+               }
+           }
+       }, new Response.ErrorListener() {
+           @Override
+           public void onErrorResponse(VolleyError error) {
+               error.printStackTrace();
+           }
+       });
 
 
 
